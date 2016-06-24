@@ -44,16 +44,3 @@ spl_autoload_register(function($class) {
 
 	add_action('init', 'cvmaker_init');
 
-
-	/** FEED TESTING, DISABLE FEED CACHE FOR TEST
-	 function return_cache_time( $seconds ){
-
-	 // change the default feed cache recreation period to 60 seconds
-
-	 return (int) 5;
-
-	 }
-	 //set feed cache duration
-	 add_filter( 'wp_feed_cache_transient_lifetime', 'return_cache_time');
-
-	 */
