@@ -8,6 +8,7 @@ class Setup  {
 	{
 		$this->setupPostType();
 		$this->setupTaxonomy();
+		$this->setupConfigScreens();
 	}
 	
 	function setupPostType()
@@ -46,5 +47,11 @@ class Setup  {
 
 		register_taxonomy( 'skills', 'iru_positions', $args );
 		register_taxonomy_for_object_type( 'skills', 'iru_positions' );
+	}
+	
+	function setupConfigScreens()
+	{
+		//Setup the configuration screen for the plugin and the LI importer
+		//Configuration variables: api_key, api_secret, callback_url
 	}
 }

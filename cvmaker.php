@@ -37,10 +37,10 @@ spl_autoload_register(function($class) {
 	}
 });
 
-	function cvmaker_init()
-	{
-		$feeds = new \Irune\Plugins\CVMaker\Setup();
-	}
+function cvmaker_init()
+{
+	$feeds = new \Irune\Plugins\CVMaker\Setup();
+}
 
-	add_action('init', 'cvmaker_init');
+add_action('init', 'cvmaker_init');
 
