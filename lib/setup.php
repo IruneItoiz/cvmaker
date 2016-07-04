@@ -61,12 +61,40 @@ class Setup  {
 	function pageInit()
 	{
 		
+		
 		$settingsPage = function()
-		{		
+		{
+			$feedback = '';
+			if (isset($_POST['cvmaker_import']) && check_admin_referer('cvmaker_import_nonce')) {
+			    // the button has been pressed AND we've passed the security check
+			    $api_key = get_option( 'api_key');
+			    $api_secret = get_option( 'api_secret');
+			    $callback_url = get_option( 'callback_url');
+			    
+			    if (!$api_key || !$api_secret || !$callback_url)
+			    {
+			    	$success = false;
+			    	$feedback = 'Can\'t import unless you configure Linkedin';
+			    } else 
+			    {
+			    	$result = $this->importCV();
+			    	$success = $result['success'];
+			    	$feedback = $result['feedback'];
+			    }
+			  }
 			?>
 	        <div class="wrap">
+	        	<?php if ($feedback) { ?>
+		        	<?php if ($success) { ?>
+		        	<div class="notice notice-success is-dismissible"> 
+		        	<?php } else { ?>
+		        	<div class="notice notice-error is-dismissible">
+		        	<?php } ?>
+						<p><strong><?php echo $feedback;?></strong></p>
+					</div>
+				<?php } ?>
+
 	            <h2>CVMaker LinkedIn Integration</h2>
-	            <?php settings_errors(); ?>           
 	            <form method="post" action="options.php">
 	            <?php
 	                // This prints out all hidden setting fields
@@ -74,6 +102,12 @@ class Setup  {
 	                do_settings_sections( 'cvmaker-admin' );
 	                submit_button(); 
 	            ?>
+	            </form>
+	            <h2>Import CV from LinkedIn</h2>
+	            <form method="post">
+	            <?php wp_nonce_field('cvmaker_import_nonce'); ?>
+  				<input type="hidden" value="true" name="cvmaker_import" />
+  				<?php submit_button('Import LI Data'); ?>
 	            </form>
 	        </div>
 			<?php
@@ -103,7 +137,7 @@ class Setup  {
 		
 		add_settings_field(
 				'api_key', // ID
-				'API key', // Title
+				'Client ID', // Title
 				array( $this, 'printOption' ), // Callback
 				'cvmaker-admin', // Page
 				'cvmaker_linkedin_settings', // Section
@@ -115,7 +149,7 @@ class Setup  {
 		
 		add_settings_field(
 				'api_secret',
-				'API secret',
+				'Client Secret',
 				array( $this, 'printOption' ),
 				'cvmaker-admin',
 				'cvmaker_linkedin_settings',
@@ -167,5 +201,14 @@ class Setup  {
 	function printHeaders()
 	{
 		print 'Enter LinkedIn API Integration settings below:';
+	}
+	
+	function importCV($network = 'LI')
+	{
+		if ($network == 'LI')
+		{
+			$liImporter = new LinkedinImporter();
+			return $liImporter->run();
+		}
 	}
 }
