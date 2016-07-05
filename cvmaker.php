@@ -31,11 +31,35 @@ spl_autoload_register(function($class) {
 	$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 	//error_log('debug: namespace matched, relative class ' . $relative_class . ' and file ' . $file, 0);//debug
 	// if the fies exists, require it
+
 	if (file_exists($file)) {
 		//error_log('debug: file loaded ' . $file, 0);//debug
 		require $file;
 	}
 });
+
+// autoloading potential third parties
+spl_autoload_register(function($class) {
+		echo "running autoload: ".$class;
+		//project specific namespace prefix
+
+		//base directory for the namespace prefix
+		$base_dir = __DIR__ . '/vendors/';
+			
+
+		// replace the namespace prefix with base direcrory,
+		// replace namespace separators with directory separators
+		// in the relative class name, append with .php
+		$file = $base_dir . str_replace('\\', '/', $class) . '.php';
+		
+		//error_log('debug: namespace matched, relative class ' . $relative_class . ' and file ' . $file, 0);//debug
+		// if the fies exists, require it
+		if (file_exists($file)) {
+			//error_log('debug: file loaded ' . $file, 0);//debug
+			require $file;
+		}
+	});
+	
 
 function cvmaker_init()
 {

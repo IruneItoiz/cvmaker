@@ -67,17 +67,16 @@ class Setup  {
 			$feedback = '';
 			if (isset($_POST['cvmaker_import']) && check_admin_referer('cvmaker_import_nonce')) {
 			    // the button has been pressed AND we've passed the security check
-			    $api_key = get_option( 'api_key');
-			    $api_secret = get_option( 'api_secret');
-			    $callback_url = get_option( 'callback_url');
-			    
-			    if (!$api_key || !$api_secret || !$callback_url)
+			    $config['api_key'] = get_option( 'li_api_key');
+			    $config['api_secret'] = get_option( 'li_api_secret');
+			    $config['callback_url'] = get_option( 'li_callback_url');
+			    if (!$config['api_key'] || !$config['api_secret'] || ! $config['callback_url'] )
 			    {
 			    	$success = false;
 			    	$feedback = 'Can\'t import unless you configure Linkedin';
 			    } else 
 			    {
-			    	$result = $this->importCV();
+			    	$result = $this->importCV($config);
 			    	$success = $result['success'];
 			    	$feedback = $result['feedback'];
 			    }
@@ -136,50 +135,50 @@ class Setup  {
 				);
 		
 		add_settings_field(
-				'api_key', // ID
+				'li_api_key', // ID
 				'Client ID', // Title
 				array( $this, 'printOption' ), // Callback
 				'cvmaker-admin', // Page
 				'cvmaker_linkedin_settings', // Section
 				array (
-						'label_for' => 'api_key',
+						'label_for' => 'li_api_key',
 						'type'      => 'text'
 				)
 				);
 		
 		add_settings_field(
-				'api_secret',
+				'li_api_secret',
 				'Client Secret',
 				array( $this, 'printOption' ),
 				'cvmaker-admin',
 				'cvmaker_linkedin_settings',
 				array (
-						'label_for' => 'api_secret',
+						'label_for' => 'li_api_secret',
 						'type'      => 'text'
 				)
 				);
 		add_settings_field(
-				'callback_url',
+				'li_callback_url',
 				'Callback URL',
 				array( $this, 'printOption' ),
 				'cvmaker-admin',
 				'cvmaker_linkedin_settings',
 				array (
-						'label_for' => 'callback_url',
+						'label_for' => 'li_callback_url',
 						'type'      => 'text'
 				)
 				);
 		register_setting(
 				'cvmaker-admin', // Option group
-				'api_key' // Option name
+				'li_api_key' // Option name
 				);
 		register_setting(
 				'cvmaker-admin', // Option group
-				'api_secret' // Option name
+				'li_api_secret' // Option name
 				);
 		register_setting(
 				'cvmaker-admin', // Option group
-				'callback_url' // Option name
+				'li_callback_url' // Option name
 				);
 	}
 	
@@ -203,12 +202,12 @@ class Setup  {
 		print 'Enter LinkedIn API Integration settings below:';
 	}
 	
-	function importCV($network = 'LI')
+	function importCV($config, $network = 'LI')
 	{
 		if ($network == 'LI')
 		{
-			$liImporter = new LinkedinImporter();
-			return $liImporter->run();
+			$liImporter = new LinkedinImporter($config);
+			//return $liImporter->run();
 		}
 	}
 }
