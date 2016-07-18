@@ -40,7 +40,6 @@ spl_autoload_register(function($class) {
 
 // autoloading potential third parties
 spl_autoload_register(function($class) {
-		echo "running autoload: ".$class;
 		//project specific namespace prefix
 
 		//base directory for the namespace prefix
